@@ -1,3 +1,4 @@
+Decode BOC to get transaction's information on blockchain
 ```bash
 npm install
 
