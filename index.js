@@ -1,10 +1,19 @@
+require('dotenv').config()
+
 const express = require('express');
 const bodyParser = require('body-parser');
 const { Cell } = require('@ton/core');
+const TonWeb = require('tonweb');
+const axios = require('axios');
+
+const TonService = require('./services/ton')
+const {
+    IS_MAINNET,
+} = process.env;
 
 const app = express();
 const port = 4000;
-const TELEGRAM_API_URL = 'https://testnet.tonapi.io'
+const TELEGRAM_API_URL = IS_MAINNET === "1" ? 'https://tonapi.io': 'https://testnet.tonapi.io'
 app.use(bodyParser.json());
 
 // Health check endpoint
@@ -32,6 +41,36 @@ app.post('/hash', async (req, res) => {
         res.status(500).send('Error processing the base64 string');
     }
 });
+
+app.post('/withdraw', async (req, res) => {
+    const { transaction_id,
+        wallet_address,
+        amount,
+        notify_url } = req.body;
+
+    if (!transaction_id || !wallet_address || !amount || !notify_url) {
+        return res.status(400).send('invalid request');
+    }
+
+    try {
+        const withdrawalRequest = {
+            amount: TonWeb.utils.toNano(amount.toString()), 
+            toAddress: wallet_address,
+        }
+        
+        await TonService.doWithdraw(withdrawalRequest)
+
+        axios.get(`${notify_url}?transaction_id=${transaction_id}`, {})
+        res.send({
+            status: 'success',
+            message: 'withdrawal request sent'
+        });
+    } catch (error) {
+        console.log(error)
+        res.status(500).send('Error processing the withdrawal request');
+    }
+});
+
 
 app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);
