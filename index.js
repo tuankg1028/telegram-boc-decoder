@@ -22,7 +22,7 @@ app.get('/health', (req, res) => {
 });
 
 app.post('/hash', async (req, res) => {
-    const { boc } = req.body;
+    const { boc, notify_url } = req.body;
 
     if (!boc) {
         return res.status(400).send('boc is required');
@@ -35,8 +35,13 @@ app.post('/hash', async (req, res) => {
 
         const transactionRes = await fetch(`${TELEGRAM_API_URL}/v2/blockchain/messages/${hashHex}/transaction`)
         const transaction = await transactionRes.json();
-      
-        res.send(transaction);
+        
+        axios.post(notify_url, transaction)
+        res.send({
+            notify_url,
+            status: 'success',
+            message: 'decode hash success',
+        });
     } catch (error) {
         res.status(500).send('Error processing the base64 string');
     }
@@ -62,6 +67,7 @@ app.post('/withdraw', async (req, res) => {
 
         axios.get(`${notify_url}?transaction_id=${transaction_id}`, {})
         res.send({
+            notify_url,
             status: 'success',
             message: 'withdrawal request sent'
         });
