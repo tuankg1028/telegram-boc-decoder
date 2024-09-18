@@ -22,8 +22,8 @@ app.get('/health', (req, res) => {
 });
 
 app.post('/hash', async (req, res) => {
-    const { boc, notify_url } = req.body;
-
+    const { boc, notify_url, transaction_id } = req.body;
+    
     if (!boc) {
         return res.status(400).send('boc is required');
     }
@@ -36,7 +36,7 @@ app.post('/hash', async (req, res) => {
         const transactionRes = await fetch(`${TELEGRAM_API_URL}/v2/blockchain/messages/${hashHex}/transaction`)
         const transaction = await transactionRes.json();
         
-        axios.post(notify_url, transaction)
+        axios.post(notify_url, {...transaction, transaction_id, hash: boc})
         res.send({
             notify_url,
             status: 'success',
@@ -65,7 +65,7 @@ app.post('/withdraw', async (req, res) => {
         
         await TonService.doWithdraw(withdrawalRequest)
 
-        axios.get(`${notify_url}?transaction_id=${transaction_id}`, {})
+        axios.post(notify_url, { transaction_id })
         res.send({
             notify_url,
             status: 'success',
