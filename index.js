@@ -25,7 +25,9 @@ app.post('/hash', async (req, res) => {
     const { boc, notify_url, transaction_id } = req.body;
     
     if (!boc) {
-        return res.status(400).send('boc is required');
+        return res.status(400).send({
+            error: 'boc is required'
+        });
     }
 
     try {
@@ -54,7 +56,9 @@ app.post('/withdraw', async (req, res) => {
         notify_url } = req.body;
 
     if (!transaction_id || !wallet_address || !amount || !notify_url) {
-        return res.status(400).send('invalid request');
+        return res.status(400).send({
+            error: 'invalid request'
+        });
     }
 
     try {
