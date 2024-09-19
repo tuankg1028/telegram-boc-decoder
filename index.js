@@ -22,7 +22,7 @@ app.get('/health', (req, res) => {
 });
 
 app.post('/hash', async (req, res) => {
-    const { boc, notify_url, transaction_id } = req.body;
+    const { boc, notify_url, transaction_id, retry = 3, timeInterval = 10_000 } = req.body;
     
     if (!boc) {
         return res.status(400).send({
@@ -35,9 +35,25 @@ app.post('/hash', async (req, res) => {
         const buffer = cell.hash();
         const hashHex = buffer.toString('hex');
 
-        const transactionRes = await fetch(`${TELEGRAM_API_URL}/v2/blockchain/messages/${hashHex}/transaction`)
-        const transaction = await transactionRes.json();
-        
+        let transaction = null;
+        let attempts = 0;
+
+        while (!transaction && attempts < retry) {
+            const transactionRes = await fetch(`${TELEGRAM_API_URL}/v2/blockchain/messages/${hashHex}/transaction`);
+            transaction = await transactionRes.json();
+
+            if (!transaction) {
+                attempts++;
+                await new Promise(resolve => setTimeout(resolve, timeInterval));
+            }
+        }
+
+        if (!transaction) {
+            return res.status(400).send({
+                error: 'Failed to retrieve transaction after multiple attempts'
+            });
+        }
+
         axios.post(notify_url, {...transaction, transaction_id, hash: boc})
         res.send({
             notify_url,
