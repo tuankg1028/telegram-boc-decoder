@@ -48,7 +48,7 @@ app.post('/hash', async (req, res) => {
             }
         }
 
-        if (!transaction) {
+        if (!transaction || transaction.error) {
             return res.status(400).send({
                 error: 'Failed to retrieve transaction after multiple attempts'
             });
