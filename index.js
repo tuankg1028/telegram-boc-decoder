@@ -39,6 +39,7 @@ app.post('/hash', async (req, res) => {
         let attempts = 0;
 
         while (!transaction && attempts < retry) {
+            console.log(`Attempt ${attempts + 1} to retrieve transaction`);
             const transactionRes = await fetch(`${TELEGRAM_API_URL}/v2/blockchain/messages/${hashHex}/transaction`);
             transaction = await transactionRes.json();
 
