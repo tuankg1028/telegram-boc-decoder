@@ -43,7 +43,7 @@ app.post('/hash', async (req, res) => {
             const transactionRes = await fetch(`${TELEGRAM_API_URL}/v2/blockchain/messages/${hashHex}/transaction`);
             transaction = await transactionRes.json();
 
-            if (!transaction) {
+            if (!transaction || transaction.error) {
                 attempts++;
                 await new Promise(resolve => setTimeout(resolve, timeInterval));
             }
