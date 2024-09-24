@@ -55,6 +55,7 @@ app.post('/hash', async (req, res) => {
             });
         }
 
+        console.log('Transaction:', transaction);
         axios.post(notify_url, {...transaction, transaction_id, hash: boc})
         res.send({
             notify_url,
