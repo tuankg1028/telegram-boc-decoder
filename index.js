@@ -87,7 +87,8 @@ app.post('/withdraw', async (req, res) => {
         
         const withdrawalRes = await TonService.doWithdraw(withdrawalRequest)
 
-        const callbackPayload =  { transaction_id, amount, fee: withdrawalRes.fee?.source_fees?.gas_fee, status: withdrawalRes.error ? 'fail' : 'success' }
+        const status = withdrawalRes.error ? 'fail' : 'success'
+        const callbackPayload =  { transaction_id, amount, fee: withdrawalRes.fee?.source_fees?.gas_fee, status }
 
         axios.post(notify_url, callbackPayload).catch((error) => {
             console.log('Failed to notify the callback url', error.message);
@@ -95,7 +96,7 @@ app.post('/withdraw', async (req, res) => {
 
         res.send({
             notify_url,
-            status: 'success',
+            status,
             message: 'withdrawal request sent'
         });
     } catch (error) {
