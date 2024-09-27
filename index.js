@@ -22,6 +22,13 @@ app.get('/health', (req, res) => {
   res.send({ status: 'healthy' });
 });
 
+app.get('/walletInfo', async (req, res) => {
+    const walletInfo = await TonService.getWalletInfo()
+
+    res.json(walletInfo);
+});
+
+  
 app.post('/hash', async (req, res) => {
     const { boc, notify_url, transaction_id, retry = 3, timeInterval = 10_000 } = req.body;
     

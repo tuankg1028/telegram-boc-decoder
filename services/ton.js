@@ -13,6 +13,25 @@ const tonweb = IS_MAINNET === "1" ?
     new TonWeb(new TonWeb.HttpProvider('https://testnet.toncenter.com/api/v2/jsonRPC', { apiKey: TON_API_KEY }));
 
 
+const getWalletInfo = async () => {
+    const seed = await TonWebMnemonic.mnemonicToSeed(MNEMONIC.split(' '));
+    const keyPair = TonWeb.utils.keyPairFromSeed(seed);
+
+    const WalletClass = tonweb.wallet.all.v3R2;
+
+    const wallet = new WalletClass(tonweb.provider, {
+        publicKey: keyPair.publicKey
+    });
+
+    const address = await wallet.getAddress()
+    const nonBounceableAddress = address.toString(true, true, true);
+
+    const balance = await tonweb.provider.getBalance((address).toString(true, true, true))
+    return {
+        address: nonBounceableAddress,
+        balance: TonWeb.utils.fromNano(balance)
+    };
+}
 const doWithdraw = async (withdrawalRequest) => {
     
     try {
@@ -91,5 +110,6 @@ const doWithdraw = async (withdrawalRequest) => {
 }
 
 module.exports = {
-    doWithdraw
+    doWithdraw,
+    getWalletInfo
 }
