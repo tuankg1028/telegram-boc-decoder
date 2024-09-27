@@ -9,10 +9,11 @@ const axios = require('axios');
 const TonService = require('./services/ton')
 const {
     IS_MAINNET,
+    PORT = 4000
 } = process.env;
 
 const app = express();
-const port = 4000;
+const port = PORT;
 const TELEGRAM_API_URL = IS_MAINNET === "1" ? 'https://tonapi.io': 'https://testnet.tonapi.io'
 const TON_EXPLORER_URL = IS_MAINNET === "1" ? 'https://tonviewer.com': 'https://testnet.tonviewer.com'
 app.use(bodyParser.json());
