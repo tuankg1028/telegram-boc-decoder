@@ -14,6 +14,7 @@ const {
 const app = express();
 const port = 4000;
 const TELEGRAM_API_URL = IS_MAINNET === "1" ? 'https://tonapi.io': 'https://testnet.tonapi.io'
+const TON_EXPLORER_URL = IS_MAINNET === "1" ? 'https://tonviewer.com': 'https://testnet.tonviewer.com'
 app.use(bodyParser.json());
 
 // Health check endpoint
@@ -56,9 +57,11 @@ app.post('/hash', async (req, res) => {
         }
 
         console.log('Transaction:', transaction);
-        axios.post(notify_url, {...transaction, transaction_id, hash: boc})
+        const explorerUrl = `${TON_EXPLORER_URL}/transaction/${hashHex}`;
+        axios.post(notify_url, {...transaction, transaction_id, hash: boc, explorerUrl })
         res.send({
             notify_url,
+            explorerUrl,
             status: 'success',
             message: 'decode hash success',
         });
@@ -88,7 +91,7 @@ app.post('/withdraw', async (req, res) => {
         const withdrawalRes = await TonService.doWithdraw(withdrawalRequest)
 
         const status = withdrawalRes.error ? 'fail' : 'success'
-        const callbackPayload =  { transaction_id, amount, fee: withdrawalRes.fee?.source_fees?.gas_fee, status }
+        const callbackPayload =  { transaction_id, amount, fee: withdrawalRes.fee?.source_fees?.gas_fee, status, errorDescription: withdrawalRes.error }
 
         axios.post(notify_url, callbackPayload).catch((error) => {
             console.log('Failed to notify the callback url', error.message);
@@ -97,7 +100,8 @@ app.post('/withdraw', async (req, res) => {
         res.send({
             notify_url,
             status,
-            message: 'withdrawal request sent'
+            message: 'withdrawal request sent',
+            errorDescription: withdrawalRes.error
         });
     } catch (error) {
         console.log(error)
