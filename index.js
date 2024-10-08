@@ -66,7 +66,10 @@ app.post('/hash', async (req, res) => {
 
         console.log('Transaction:', transaction);
         const explorerUrl = `${TON_EXPLORER_URL}/transaction/${hashHex}`;
-        axios.post(notify_url, {...transaction, transaction_id, hash: boc, explorerUrl })
+        axios.post(notify_url, {...transaction, transaction_id, hash: boc, explorerUrl }).catch((error) => {
+            console.log('Failed to notify the callback url', error.message);
+        });
+        
         res.send({
             notify_url,
             explorerUrl,
