@@ -142,6 +142,10 @@ $("#send-transaction").on("click", function (e) {
   sendTransaction();
 });
 
-$("#send-usdt-transaction").on("click", function (e) {
-  sendUSDTTransaction();
+$("#send-usdt-transaction").on("click", async function (e) {
+  const { boc } = await sendUSDTTransaction();
+
+  if (boc) {
+    document.getElementById("bank-transfer").submit();
+  }
 });
