@@ -1,7 +1,6 @@
 const TonWeb = require("tonweb");
 const TonWebMnemonic = require("tonweb-mnemonic");
-const { TonClient, JettonMaster } = require("@ton/ton");
-const { Address } = require("@ton/core");
+const axios = require("axios");
 
 const { IS_MAINNET, MNEMONIC, TON_API_KEY, WALLET_ADDRESS } = process.env;
 

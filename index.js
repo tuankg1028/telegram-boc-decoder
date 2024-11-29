@@ -88,7 +88,7 @@ app.post("/usdt-deposit", async (req, res) => {
       message: "success",
     });
   } catch (error) {
-    res.status(500).send("Error processing the base64 string");
+    res.status(500).send(`Error usdt-deposit: ${error.message}`);
   }
 });
 
