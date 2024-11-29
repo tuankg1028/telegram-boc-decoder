@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "target": "ES5", // Or another target depending on your needs
+    "module": "ESNext", // Use ES modules
+    "esModuleInterop": true, // Enable ES module interoperability
+    "lib": ["ES2015", "DOM"], // For ES6 features like Promise
+    "moduleResolution": "Node", // To resolve modules as in Node.js
+    "allowSyntheticDefaultImports": true // Allow default imports from non-ES modules
+  },
+  "exclude": ["node_modules"]
+}
