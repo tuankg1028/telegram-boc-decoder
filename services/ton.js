@@ -13,6 +13,8 @@ const TON_API_ENDPOINT =
   IS_MAINNET === "1"
     ? "https://toncenter.com/api/v2/jsonRPC"
     : "https://testnet.toncenter.com/api/v2/jsonRPC";
+const TON_KEEPER_API_ENDPOINT =
+  IS_MAINNET === "1" ? "https://tonapi.io" : "https://testnet.tonapi.io";
 const USDT_JETTON_ADDRESS =
   IS_MAINNET === "1" ? USDT_MASTER_ADDRESS : USDT_MASTER_ADDRESS_TESTNET;
 const BN = TonWeb.utils.BN;
@@ -130,7 +132,7 @@ const doWithdraw = async (withdrawalRequest) => {
 
 const getSenderDepositJetton = async (senderAddress) => {
   const eventsRes = await axios.get(
-    `https://tonapi.io/v2/accounts/${WALLET_ADDRESS}/events?initiator=false&subject_only=false&limit=20`
+    `${TON_KEEPER_API_ENDPOINT}/v2/accounts/${WALLET_ADDRESS}/events?initiator=false&subject_only=false&limit=20`
   );
 
   const events = eventsRes.data.events;
