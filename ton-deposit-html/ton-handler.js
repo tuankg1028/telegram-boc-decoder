@@ -53535,21 +53535,21 @@ function connectToWallet() {
   return _connectToWallet.apply(this, arguments);
 } // Call the function
 function _connectToWallet() {
-  _connectToWallet = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
+  _connectToWallet = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee2() {
     var connectedWallet;
-    return _regeneratorRuntime().wrap(function _callee$(_context) {
-      while (1) switch (_context.prev = _context.next) {
+    return _regeneratorRuntime().wrap(function _callee2$(_context2) {
+      while (1) switch (_context2.prev = _context2.next) {
         case 0:
-          _context.next = 2;
+          _context2.next = 2;
           return tonConnectUI.connectWallet();
         case 2:
-          connectedWallet = _context.sent;
+          connectedWallet = _context2.sent;
           console.log(connectedWallet);
         case 4:
         case "end":
-          return _context.stop();
+          return _context2.stop();
       }
-    }, _callee);
+    }, _callee2);
   }));
   return _connectToWallet.apply(this, arguments);
 }
@@ -53560,10 +53560,10 @@ function sendTransaction() {
   return _sendTransaction.apply(this, arguments);
 }
 function _sendTransaction() {
-  _sendTransaction = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee2() {
+  _sendTransaction = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee3() {
     var amount, address, transaction, res;
-    return _regeneratorRuntime().wrap(function _callee2$(_context2) {
-      while (1) switch (_context2.prev = _context2.next) {
+    return _regeneratorRuntime().wrap(function _callee3$(_context3) {
+      while (1) switch (_context3.prev = _context3.next) {
         case 0:
           amount = $("#deposit-amount").val() / $("#ton-price").val();
           address = $.trim($(".bank-listing .form-check-input:checked").parent().find(".address").text()) || TEST_WALLET;
@@ -53574,27 +53574,27 @@ function _sendTransaction() {
               amount: amount.toFixed(2) * 1000000000
             }]
           };
-          _context2.prev = 3;
-          _context2.next = 6;
+          _context3.prev = 3;
+          _context3.next = 6;
           return tonConnectUI.sendTransaction(transaction);
         case 6:
-          res = _context2.sent;
+          res = _context3.sent;
           if (res.boc) {
             $("#boc").val(res.boc);
             document.getElementById("bank-transfer").submit();
             console.log(JSON.stringify(res));
           }
-          _context2.next = 13;
+          _context3.next = 13;
           break;
         case 10:
-          _context2.prev = 10;
-          _context2.t0 = _context2["catch"](3);
-          console.log(_context2.t0);
+          _context3.prev = 10;
+          _context3.t0 = _context3["catch"](3);
+          console.log(_context3.t0);
         case 13:
         case "end":
-          return _context2.stop();
+          return _context3.stop();
       }
-    }, _callee2, null, [[3, 10]]);
+    }, _callee3, null, [[3, 10]]);
   }));
   return _sendTransaction.apply(this, arguments);
 }
@@ -53602,11 +53602,11 @@ function sendUSDTTransaction() {
   return _sendUSDTTransaction.apply(this, arguments);
 }
 function _sendUSDTTransaction() {
-  _sendUSDTTransaction = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee4() {
+  _sendUSDTTransaction = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee5() {
     var _tonConnectUI$wallet;
     var walletAddress, amount, depositWallet, jettonMaster, userAddress, jettonWallet, depositJettonAddress, depositjettonWallet, sender;
-    return _regeneratorRuntime().wrap(function _callee4$(_context4) {
-      while (1) switch (_context4.prev = _context4.next) {
+    return _regeneratorRuntime().wrap(function _callee5$(_context5) {
+      while (1) switch (_context5.prev = _context5.next) {
         case 0:
           console.log(1, tonConnectUI.wallet);
           walletAddress = (_tonConnectUI$wallet = tonConnectUI.wallet) !== null && _tonConnectUI$wallet !== void 0 && (_tonConnectUI$wallet = _tonConnectUI$wallet.account) !== null && _tonConnectUI$wallet !== void 0 && _tonConnectUI$wallet.address ? Address.parse(tonConnectUI.wallet.account.address) : undefined;
@@ -53618,27 +53618,27 @@ function _sendUSDTTransaction() {
           console.log(1.1, USDT_MASTER_ADDRESS);
           jettonMaster = tonClient.open(JettonMaster.create(USDT_MASTER_ADDRESS));
           console.log(1.2, jettonMaster);
-          _context4.next = 10;
+          _context5.next = 10;
           return jettonMaster.getWalletAddress(walletAddress);
         case 10:
-          userAddress = _context4.sent;
+          userAddress = _context5.sent;
           console.log(2, userAddress.toString());
           jettonWallet = tonClient.open(JettonWallet.createFromAddress(userAddress));
           console.log(3, jettonWallet, jettonWallet.address.toString());
-          _context4.next = 16;
+          _context5.next = 16;
           return jettonMaster.getWalletAddress(Address.parse(depositWallet));
         case 16:
-          depositJettonAddress = _context4.sent;
+          depositJettonAddress = _context5.sent;
           depositjettonWallet = tonClient.open(JettonWallet.createFromAddress(depositJettonAddress));
           console.log(4, depositjettonWallet, depositjettonWallet.address.toString());
           sender = {
             send: function () {
-              var _send = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee3(args) {
+              var _send = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee4(args) {
                 var _args$body;
-                return _regeneratorRuntime().wrap(function _callee3$(_context3) {
-                  while (1) switch (_context3.prev = _context3.next) {
+                return _regeneratorRuntime().wrap(function _callee4$(_context4) {
+                  while (1) switch (_context4.prev = _context4.next) {
                     case 0:
-                      _context3.next = 2;
+                      _context4.next = 2;
                       return tonConnectUI.sendTransaction({
                         messages: [{
                           address: args.to.toString(),
@@ -53649,18 +53649,18 @@ function _sendUSDTTransaction() {
                       });
                     case 2:
                     case "end":
-                      return _context3.stop();
+                      return _context4.stop();
                   }
-                }, _callee3);
+                }, _callee4);
               }));
-              function send(_x) {
+              function send(_x2) {
                 return _send.apply(this, arguments);
               }
               return send;
             }(),
             address: walletAddress
           };
-          _context4.next = 22;
+          _context5.next = 22;
           return jettonWallet.sendTransfer(sender, {
             fwdAmount: BigInt(1),
             comment: "",
@@ -53669,23 +53669,44 @@ function _sendUSDTTransaction() {
             value: JETTON_TRANSFER_GAS_FEES
           });
         case 22:
-          return _context4.abrupt("return", {
+          return _context5.abrupt("return", {
             boc: "123123"
           });
         case 23:
         case "end":
-          return _context4.stop();
+          return _context5.stop();
       }
-    }, _callee4);
+    }, _callee5);
   }));
   return _sendUSDTTransaction.apply(this, arguments);
 }
 $("#send-transaction").on("click", function (e) {
   sendTransaction();
 });
-$("#send-usdt-transaction").on("click", function (e) {
-  sendUSDTTransaction();
-});
+$("#send-usdt-transaction").on("click", /*#__PURE__*/function () {
+  var _ref = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee(e) {
+    var _yield$sendUSDTTransa, boc;
+    return _regeneratorRuntime().wrap(function _callee$(_context) {
+      while (1) switch (_context.prev = _context.next) {
+        case 0:
+          _context.next = 2;
+          return sendUSDTTransaction();
+        case 2:
+          _yield$sendUSDTTransa = _context.sent;
+          boc = _yield$sendUSDTTransa.boc;
+          if (boc) {
+            document.getElementById("bank-transfer").submit();
+          }
+        case 5:
+        case "end":
+          return _context.stop();
+      }
+    }, _callee);
+  }));
+  return function (_x) {
+    return _ref.apply(this, arguments);
+  };
+}());
 
 },{"./wrappers/JettonWallet.js":211,"@ton/core":35,"@ton/ton":111,"@tonconnect/ui":143,"buffer":196}],211:[function(require,module,exports){
 "use strict";
