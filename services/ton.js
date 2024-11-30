@@ -44,9 +44,25 @@ const getWalletInfo = async () => {
   );
   // const history = await tonweb.provider.getTransactions(address);
 
+  // usdt
+  const jettonMinter = new TonWeb.token.jetton.JettonMinter(tonweb.provider, {
+    address: USDT_JETTON_ADDRESS,
+  });
+  const jettonWalletAddress = await jettonMinter.getJettonWalletAddress(
+    address
+  );
+
+  const jettonWallet = new TonWeb.token.jetton.JettonWallet(tonweb.provider, {
+    address: jettonWalletAddress,
+  });
+  const jettonData = await jettonWallet.getData();
+
+  const jettonBalance = jettonData.balance.toString();
+
   return {
     address: nonBounceableAddress,
     balance: TonWeb.utils.fromNano(balance),
+    usdtBalance: jettonBalance / 10 ** 6,
     // history
   };
 };

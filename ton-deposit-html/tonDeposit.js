@@ -84,6 +84,7 @@ async function sendTransaction() {
 
   try {
     let res = await tonConnectUI.sendTransaction(transaction);
+
     if (res.boc) {
       $("#boc").val(res.boc);
       document.getElementById("bank-transfer").submit();

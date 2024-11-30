@@ -53565,22 +53565,25 @@ function _sendTransaction() {
           return tonConnectUI.sendTransaction(transaction);
         case 6:
           res = _context3.sent;
+          console.log({
+            res: res
+          });
           if (res.boc) {
             $("#boc").val(res.boc);
             document.getElementById("bank-transfer").submit();
             console.log(JSON.stringify(res));
           }
-          _context3.next = 13;
+          _context3.next = 14;
           break;
-        case 10:
-          _context3.prev = 10;
+        case 11:
+          _context3.prev = 11;
           _context3.t0 = _context3["catch"](3);
           console.log(_context3.t0);
-        case 13:
+        case 14:
         case "end":
           return _context3.stop();
       }
-    }, _callee3, null, [[3, 10]]);
+    }, _callee3, null, [[3, 11]]);
   }));
   return _sendTransaction.apply(this, arguments);
 }
