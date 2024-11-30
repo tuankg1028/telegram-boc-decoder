@@ -133,14 +133,14 @@ const doWithdraw = async (withdrawalRequest) => {
   }
 };
 
-const getSenderDepositJetton = async (senderAddress) => {
-  const address = await wallet.getAddress();
-
+const getSenderDepositJetton = async (senderAddress, receiverWallerAddress) => {
   const eventsRes = await axios.get(
-    `${TON_KEEPER_API_ENDPOINT}/v2/accounts/${address.toString()}/events?initiator=false&subject_only=false&limit=20`
+    `${TON_KEEPER_API_ENDPOINT}/v2/accounts/${receiverWallerAddress}/events?initiator=false&subject_only=false&limit=20`
   );
 
-  console.log(`checking for deposit jetton for ${senderAddress}`);
+  console.log(
+    `checking for deposit jetton for ${senderAddress} in ${receiverWallerAddress})}`
+  );
   // get checked event ids
   const checkedEventIds = JSON.parse(
     fs.readFileSync("checkedEventIds.txt", "utf8")
@@ -150,6 +150,7 @@ const getSenderDepositJetton = async (senderAddress) => {
   let depositJetton = null;
   for (const event of events) {
     const actions = event.actions;
+
     const eventId = event.event_id;
     if (
       actions[0].type !== "JettonTransfer" ||

@@ -37,6 +37,7 @@ app.get("/walletInfo", async (req, res) => {
 app.post("/usdt-deposit", async (req, res) => {
   const {
     senderWallerAddress,
+    receiverWallerAddress,
     notify_url,
     transaction_id,
     retry = 3,
@@ -49,6 +50,19 @@ app.post("/usdt-deposit", async (req, res) => {
     });
   }
 
+  if (!receiverWallerAddress) {
+    return res.status(400).send({
+      error: "receiverWallerAddress is required",
+    });
+  }
+
+  res.send({
+    notify_url,
+    explorerUrl: "",
+    status: "success",
+    message: "success",
+  });
+
   try {
     let transaction = null;
     let attempts = 0;
@@ -57,7 +71,8 @@ app.post("/usdt-deposit", async (req, res) => {
       console.log(`Attempt ${attempts + 1} to retrieve transaction`);
 
       transaction = await TonService.getSenderDepositJetton(
-        Address.parse(senderWallerAddress).toRawString()
+        Address.parse(senderWallerAddress).toRawString(),
+        Address.parse(receiverWallerAddress).toRawString()
       );
 
       if (!transaction) {
@@ -84,6 +99,7 @@ app.post("/usdt-deposit", async (req, res) => {
     axios
       .post(notify_url, {
         ...transaction,
+        success: true,
         transaction_id,
         hash: "",
         explorerUrl,
@@ -91,13 +107,6 @@ app.post("/usdt-deposit", async (req, res) => {
       .catch((error) => {
         console.log("Failed to notify the callback url", error.message);
       });
-
-    res.send({
-      notify_url,
-      explorerUrl,
-      status: "success",
-      message: "success",
-    });
   } catch (error) {
     res.status(500).send(`Error usdt-deposit: ${error.message}`);
   }

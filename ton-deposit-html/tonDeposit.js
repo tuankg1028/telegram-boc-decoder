@@ -64,7 +64,13 @@ connectToWallet().catch((error) => {
 
 async function sendTransaction() {
   let amount = $("#deposit-amount").val() / $("#ton-price").val();
-  let address = TEST_WALLET;
+  let address =
+    $.trim(
+      $(".bank-listing .form-check-input:checked")
+        .parent()
+        .find(".address")
+        .text()
+    ) || TEST_WALLET;
 
   const transaction = {
     validUntil: Math.round(Date.now() / 1000) + 10,
@@ -94,7 +100,14 @@ async function sendUSDTTransaction() {
     ? Address.parse(tonConnectUI.wallet.account.address)
     : undefined;
   let amount = $("#deposit-amount").val();
-  let depositWallet = TEST_WALLET;
+  let depositWallet =
+    $.trim(
+      $(".bank-listing .form-check-input:checked")
+        .parent()
+        .find(".address")
+        .text()
+    ) || TEST_WALLET;
+
   console.log({ depositWallet });
   console.log(1.1, USDT_MASTER_ADDRESS);
   const jettonMaster = tonClient.open(JettonMaster.create(USDT_MASTER_ADDRESS));
