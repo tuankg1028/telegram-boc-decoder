@@ -4985,8 +4985,8 @@ function createBitStringValue(bits) {
   };
 }
 
-}).call(this)}).call(this,{"isBuffer":require("../../../../is-buffer/index.js")})
-},{"../../../../is-buffer/index.js":201,"../address/Address":2,"../boc/BitString":7,"../boc/Builder":8,"../boc/Cell":9,"./generateMerkleProof":28,"./generateMerkleUpdate":29,"./parseDict":30,"./serializeDict":31,"./utils/internalKeySerializer":33}],28:[function(require,module,exports){
+}).call(this)}).call(this,{"isBuffer":require("../../../../../../is-buffer@1.1.6/node_modules/is-buffer/index.js")})
+},{"../../../../../../is-buffer@1.1.6/node_modules/is-buffer/index.js":201,"../address/Address":2,"../boc/BitString":7,"../boc/Builder":8,"../boc/Cell":9,"./generateMerkleProof":28,"./generateMerkleUpdate":29,"./parseDict":30,"./serializeDict":31,"./utils/internalKeySerializer":33}],28:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -38105,7 +38105,8 @@ var Axios = /*#__PURE__*/function () {
               _context.prev = 6;
               _context.t0 = _context["catch"](0);
               if (_context.t0 instanceof Error) {
-                Error.captureStackTrace ? Error.captureStackTrace(dummy = {}) : dummy = new Error();
+                dummy = {};
+                Error.captureStackTrace ? Error.captureStackTrace(dummy) : dummy = new Error();
 
                 // slice off the Error: ... line
                 stack = dummy.stack ? dummy.stack.replace(/^.+\n/, '') : '';
@@ -38167,6 +38168,10 @@ var Axios = /*#__PURE__*/function () {
           }, true);
         }
       }
+      _validator["default"].assertOptions(config, {
+        baseUrl: validators.spelling('baseURL'),
+        withXsrfToken: validators.spelling('withXSRFToken')
+      }, true);
 
       // Set config.method
       config.method = (config.method || this.defaults.method || 'get').toLowerCase();
@@ -38887,7 +38892,7 @@ function mergeConfig(config1, config2) {
   // eslint-disable-next-line no-param-reassign
   config2 = config2 || {};
   var config = {};
-  function getMergedValue(target, source, caseless) {
+  function getMergedValue(target, source, prop, caseless) {
     if (_utils["default"].isPlainObject(target) && _utils["default"].isPlainObject(source)) {
       return _utils["default"].merge.call({
         caseless: caseless
@@ -38901,11 +38906,11 @@ function mergeConfig(config1, config2) {
   }
 
   // eslint-disable-next-line consistent-return
-  function mergeDeepProperties(a, b, caseless) {
+  function mergeDeepProperties(a, b, prop, caseless) {
     if (!_utils["default"].isUndefined(b)) {
-      return getMergedValue(a, b, caseless);
+      return getMergedValue(a, b, prop, caseless);
     } else if (!_utils["default"].isUndefined(a)) {
-      return getMergedValue(undefined, a, caseless);
+      return getMergedValue(undefined, a, prop, caseless);
     }
   }
 
@@ -38962,8 +38967,8 @@ function mergeConfig(config1, config2) {
     socketPath: defaultToConfig2,
     responseEncoding: defaultToConfig2,
     validateStatus: mergeDirectKeys,
-    headers: function headers(a, b) {
-      return mergeDeepProperties(headersToObject(a), headersToObject(b), true);
+    headers: function headers(a, b, prop) {
+      return mergeDeepProperties(headersToObject(a), headersToObject(b), prop, true);
     }
   };
   _utils["default"].forEach(Object.keys(Object.assign({}, config1, config2)), function computeConfigValue(prop) {
@@ -39183,7 +39188,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.VERSION = void 0;
-var VERSION = exports.VERSION = "1.7.7";
+var VERSION = exports.VERSION = "1.7.8";
 
 },{}],164:[function(require,module,exports){
 'use strict';
@@ -39369,7 +39374,7 @@ function encode(val) {
  *
  * @param {string} url The base of the url (e.g., http://www.google.com)
  * @param {object} [params] The params to be appended
- * @param {?object} options
+ * @param {?(object|Function)} options
  *
  * @returns {string} The formatted url
  */
@@ -39379,6 +39384,11 @@ function buildURL(url, params, options) {
     return url;
   }
   var _encode = options && options.encode || encode;
+  if (_utils["default"].isFunction(options)) {
+    options = {
+      serialize: options
+    };
+  }
   var serializeFn = options && options.serialize;
   var serializedParams;
   if (serializeFn) {
@@ -39634,71 +39644,24 @@ function isAxiosError(payload) {
 }
 
 },{"./../utils.js":193}],174:[function(require,module,exports){
-'use strict';
+"use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports["default"] = void 0;
-var _utils = _interopRequireDefault(require("./../utils.js"));
 var _index = _interopRequireDefault(require("../platform/index.js"));
 function _interopRequireDefault(e) { return e && e.__esModule ? e : { "default": e }; }
-var _default = exports["default"] = _index["default"].hasStandardBrowserEnv ?
-// Standard browser envs have full support of the APIs needed to test
-// whether the request URL is of the same origin as current location.
-function standardBrowserEnv() {
-  var msie = _index["default"].navigator && /(msie|trident)/i.test(_index["default"].navigator.userAgent);
-  var urlParsingNode = document.createElement('a');
-  var originURL;
-
-  /**
-  * Parse a URL to discover its components
-  *
-  * @param {String} url The URL to be parsed
-  * @returns {Object}
-  */
-  function resolveURL(url) {
-    var href = url;
-    if (msie) {
-      // IE needs attribute set twice to normalize properties
-      urlParsingNode.setAttribute('href', href);
-      href = urlParsingNode.href;
-    }
-    urlParsingNode.setAttribute('href', href);
-
-    // urlParsingNode provides the UrlUtils interface - http://url.spec.whatwg.org/#urlutils
-    return {
-      href: urlParsingNode.href,
-      protocol: urlParsingNode.protocol ? urlParsingNode.protocol.replace(/:$/, '') : '',
-      host: urlParsingNode.host,
-      search: urlParsingNode.search ? urlParsingNode.search.replace(/^\?/, '') : '',
-      hash: urlParsingNode.hash ? urlParsingNode.hash.replace(/^#/, '') : '',
-      hostname: urlParsingNode.hostname,
-      port: urlParsingNode.port,
-      pathname: urlParsingNode.pathname.charAt(0) === '/' ? urlParsingNode.pathname : '/' + urlParsingNode.pathname
-    };
-  }
-  originURL = resolveURL(window.location.href);
-
-  /**
-  * Determine if a URL shares the same origin as the current location
-  *
-  * @param {String} requestURL The URL to test
-  * @returns {boolean} True if URL shares the same origin, otherwise false
-  */
-  return function isURLSameOrigin(requestURL) {
-    var parsed = _utils["default"].isString(requestURL) ? resolveURL(requestURL) : requestURL;
-    return parsed.protocol === originURL.protocol && parsed.host === originURL.host;
+var _default = exports["default"] = _index["default"].hasStandardBrowserEnv ? function (origin, isMSIE) {
+  return function (url) {
+    url = new URL(url, _index["default"].origin);
+    return origin.protocol === url.protocol && origin.host === url.host && (isMSIE || origin.port === url.port);
   };
-}() :
-// Non standard browser envs (web workers, react-native) lack needed support.
-function nonStandardBrowserEnv() {
-  return function isURLSameOrigin() {
-    return true;
-  };
-}();
+}(new URL(_index["default"].origin), _index["default"].navigator && /(msie|trident)/i.test(_index["default"].navigator.userAgent)) : function () {
+  return true;
+};
 
-},{"../platform/index.js":192,"./../utils.js":193}],175:[function(require,module,exports){
+},{"../platform/index.js":192}],175:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -40530,6 +40493,13 @@ validators.transitional = function transitional(validator, version, message) {
       console.warn(formatMessage(opt, ' has been deprecated since v' + version + ' and will be removed in the near future'));
     }
     return validator ? validator(value, opt, opts) : true;
+  };
+};
+validators.spelling = function spelling(correctSpelling) {
+  return function (value, opt) {
+    // eslint-disable-next-line no-console
+    console.warn("".concat(opt, " is likely a misspelling of ").concat(correctSpelling));
+    return true;
   };
 };
 
@@ -53520,7 +53490,7 @@ var JETTON_TRANSFER_GAS_FEES = toNano("0.038");
 var TON_API_KEY = IS_MAINNET === "1" ? "ce3bc2ecbb46fadc220e408d8c3c81520efddf6f1ca876944468a47b1a1c9620" : "d6f13f48471eeb336b501ea04ec169f5cfdb70425c7f0472952b9e023d6f878a";
 var USDT_MASTER_ADDRESS_TESTNET = Address.parse("kQD0GKBM8ZbryVk2aESmzfU6b9b_8era_IkvBSELujFZPsyy");
 var USDT_MASTER_ADDRESS_MAINNET = Address.parse("EQCxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv7Nw2Id_sDs");
-var TEST_WALLET = "0QDTWdtCCfl3w5b86pyVVx6g_7lSAWhTEQXIJeoScZnTJTEH";
+var TEST_WALLET = "0QCVZCZQ9qRSksx-OIw8tMywKmU7jl0sOxOBfpYrZRbaKZpz";
 var USDT_MASTER_ADDRESS = IS_MAINNET === "1" ? USDT_MASTER_ADDRESS_MAINNET : USDT_MASTER_ADDRESS_TESTNET,
   TON_API_ENDPOINT = IS_MAINNET === "1" ? "https://toncenter.com/api/v2/jsonRPC" : "https://testnet.toncenter.com/api/v2/jsonRPC";
 var tonConnectUI = new TonConnectUI({

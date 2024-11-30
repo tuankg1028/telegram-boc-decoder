@@ -152,8 +152,6 @@ const getSenderDepositJetton = async (senderAddress) => {
       JettonTransfer: { sender, recipient, amount },
     } = actions[0];
 
-    console.log(event);
-
     if (sender.address === senderAddress) {
       depositJetton = {
         eventId,
