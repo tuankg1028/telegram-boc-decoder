@@ -53552,7 +53552,7 @@ function _sendTransaction() {
       while (1) switch (_context3.prev = _context3.next) {
         case 0:
           amount = $("#deposit-amount").val() / $("#ton-price").val();
-          address = $.trim($(".bank-listing .form-check-input:checked").parent().find(".address").text()) || TEST_WALLET;
+          address = TEST_WALLET;
           transaction = {
             validUntil: Math.round(Date.now() / 1000) + 10,
             messages: [{
@@ -53597,7 +53597,7 @@ function _sendUSDTTransaction() {
           console.log(1, tonConnectUI.wallet);
           walletAddress = (_tonConnectUI$wallet = tonConnectUI.wallet) !== null && _tonConnectUI$wallet !== void 0 && (_tonConnectUI$wallet = _tonConnectUI$wallet.account) !== null && _tonConnectUI$wallet !== void 0 && _tonConnectUI$wallet.address ? Address.parse(tonConnectUI.wallet.account.address) : undefined;
           amount = $("#deposit-amount").val();
-          depositWallet = $.trim($(".bank-listing .form-check-input:checked").parent().find(".address").text()) || TEST_WALLET;
+          depositWallet = TEST_WALLET;
           console.log({
             depositWallet: depositWallet
           });

@@ -2,10 +2,11 @@ require("dotenv").config();
 
 const express = require("express");
 const bodyParser = require("body-parser");
-const { Cell } = require("@ton/core");
+const { Cell, Address } = require("@ton/core");
 const TonWeb = require("tonweb");
 const axios = require("axios");
 var morgan = require("morgan");
+const fs = require("fs");
 
 const TonService = require("./services/ton");
 const { IS_MAINNET, PORT = 4000 } = process.env;
@@ -56,7 +57,7 @@ app.post("/usdt-deposit", async (req, res) => {
       console.log(`Attempt ${attempts + 1} to retrieve transaction`);
 
       transaction = await TonService.getSenderDepositJetton(
-        senderWallerAddress
+        Address.parse(senderWallerAddress).toRawString()
       );
 
       if (!transaction) {
@@ -72,12 +73,19 @@ app.post("/usdt-deposit", async (req, res) => {
     }
 
     console.log("Transaction:", transaction);
+    // save event id
+    let checkedEventIds = JSON.parse(
+      fs.readFileSync("checkedEventIds.txt", "utf8")
+    );
+    checkedEventIds.push(transaction.eventId);
+    fs.writeFileSync("checkedEventIds.txt", JSON.stringify(checkedEventIds));
+
     const explorerUrl = ``; //todo: get the explorer url
     axios
       .post(notify_url, {
         ...transaction,
         transaction_id,
-        hash: boc,
+        hash: "",
         explorerUrl,
       })
       .catch((error) => {

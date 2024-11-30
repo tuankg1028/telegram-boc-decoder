@@ -1,6 +1,7 @@
 const TonWeb = require("tonweb");
 const TonWebMnemonic = require("tonweb-mnemonic");
 const axios = require("axios");
+const fs = require("fs");
 
 const { IS_MAINNET, MNEMONIC, TON_API_KEY } = process.env;
 
@@ -139,12 +140,21 @@ const getSenderDepositJetton = async (senderAddress) => {
     `${TON_KEEPER_API_ENDPOINT}/v2/accounts/${address.toString()}/events?initiator=false&subject_only=false&limit=20`
   );
 
+  console.log(`checking for deposit jetton for ${senderAddress}`);
+  // get checked event ids
+  const checkedEventIds = JSON.parse(
+    fs.readFileSync("checkedEventIds.txt", "utf8")
+  );
+
   const events = eventsRes.data.events;
   let depositJetton = null;
   for (const event of events) {
     const actions = event.actions;
     const eventId = event.event_id;
-    if (actions[0].type !== "JettonTransfer") {
+    if (
+      actions[0].type !== "JettonTransfer" ||
+      checkedEventIds.includes(eventId)
+    ) {
       continue;
     }
 
