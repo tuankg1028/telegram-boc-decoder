@@ -2,7 +2,7 @@ const TonWeb = require("tonweb");
 const TonWebMnemonic = require("tonweb-mnemonic");
 const axios = require("axios");
 
-const { IS_MAINNET, MNEMONIC, TON_API_KEY, WALLET_ADDRESS } = process.env;
+const { IS_MAINNET, MNEMONIC, TON_API_KEY } = process.env;
 
 const USDT_MASTER_ADDRESS_TESTNET =
   "kQD0GKBM8ZbryVk2aESmzfU6b9b_8era_IkvBSELujFZPsyy";
@@ -33,7 +33,10 @@ const getWalletInfo = async () => {
   });
 
   const address = await wallet.getAddress();
-  const nonBounceableAddress = address.toString(true, true, true);
+  const nonBounceableAddress = address.toString({
+    bounceable: false,
+    testOnly: true,
+  });
 
   const balance = await tonweb.provider.getBalance(
     address.toString(true, true, true)
@@ -130,8 +133,10 @@ const doWithdraw = async (withdrawalRequest) => {
 };
 
 const getSenderDepositJetton = async (senderAddress) => {
+  const address = await wallet.getAddress();
+
   const eventsRes = await axios.get(
-    `${TON_KEEPER_API_ENDPOINT}/v2/accounts/${WALLET_ADDRESS}/events?initiator=false&subject_only=false&limit=20`
+    `${TON_KEEPER_API_ENDPOINT}/v2/accounts/${address.toString()}/events?initiator=false&subject_only=false&limit=20`
   );
 
   const events = eventsRes.data.events;
