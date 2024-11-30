@@ -37,9 +37,24 @@ const tonClient = new TonClient({
   endpoint: TON_API_ENDPOINT,
 });
 
+tonConnectUI.onStatusChange((wallet) => {
+  if (wallet) {
+    const address = Address.parse(wallet.account.address).toString({
+      bounceable: false,
+      testOnly: true,
+    });
+
+    console.log(2, { address });
+    $("#sender-wallet-address").val(address);
+  } else {
+    $("#sender-wallet-address").val("");
+  }
+});
+
 async function connectToWallet() {
   const connectedWallet = await tonConnectUI.connectWallet();
-  console.log(connectedWallet);
+
+  console.log({ connectedWallet });
 }
 
 // Call the function

@@ -5,6 +5,7 @@ const bodyParser = require("body-parser");
 const { Cell } = require("@ton/core");
 const TonWeb = require("tonweb");
 const axios = require("axios");
+var morgan = require("morgan");
 
 const TonService = require("./services/ton");
 const { IS_MAINNET, PORT = 4000 } = process.env;
@@ -17,6 +18,8 @@ const TON_EXPLORER_URL =
   IS_MAINNET === "1"
     ? "https://tonviewer.com"
     : "https://testnet.tonviewer.com";
+
+app.use(morgan("combined"));
 app.use(bodyParser.json());
 
 // Health check endpoint

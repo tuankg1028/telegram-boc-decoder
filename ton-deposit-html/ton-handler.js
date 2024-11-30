@@ -53531,6 +53531,20 @@ var tonClient = new TonClient({
   apiKey: TON_API_KEY,
   endpoint: TON_API_ENDPOINT
 });
+tonConnectUI.onStatusChange(function (wallet) {
+  if (wallet) {
+    var address = Address.parse(wallet.account.address).toString({
+      bounceable: false,
+      testOnly: true
+    });
+    console.log(2, {
+      address: address
+    });
+    $("#sender-wallet-address").val(address);
+  } else {
+    $("#sender-wallet-address").val("");
+  }
+});
 function connectToWallet() {
   return _connectToWallet.apply(this, arguments);
 } // Call the function
@@ -53544,7 +53558,9 @@ function _connectToWallet() {
           return tonConnectUI.connectWallet();
         case 2:
           connectedWallet = _context2.sent;
-          console.log(connectedWallet);
+          console.log({
+            connectedWallet: connectedWallet
+          });
         case 4:
         case "end":
           return _context2.stop();
