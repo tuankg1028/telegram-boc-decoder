@@ -189,7 +189,7 @@ app.post("/usdt-withdraw", async (req, res) => {
 
   try {
     const withdrawalRequest = {
-      amount: TonWeb.utils.toNano((Number(amount) / 1_000).toString()),
+      amount: TonWeb.utils.toNano(Number(amount).toString()),
       toAddress: wallet_address,
     };
 

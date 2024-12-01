@@ -2,6 +2,7 @@ const TonWeb = require("tonweb");
 const TonWebMnemonic = require("tonweb-mnemonic");
 const axios = require("axios");
 const fs = require("fs");
+const { Address } = require("ton-core");
 
 const { IS_MAINNET, MNEMONIC, TON_API_KEY } = process.env;
 
@@ -23,20 +24,25 @@ const tonweb = new TonWeb(
 );
 const WalletClass = tonweb.wallet.all.v2R2;
 
-const getWalletInfo = async () => {
+let wallet = null;
+let keyPair = null;
+(async function initWallet() {
   const seed = await TonWebMnemonic.mnemonicToSeed(MNEMONIC.split(" "));
-  const keyPair = TonWeb.utils.keyPairFromSeed(seed);
-
-  const WalletClass = tonweb.wallet.all.v3R2;
-
-  const wallet = new WalletClass(tonweb.provider, {
+  // const seed = TonWeb.utils.base64ToBytes('YOU_PRIVATE_KEY_IN_BASE64');  // your hot wallet seed, see `common.js`
+  keyPair = TonWeb.utils.keyPairFromSeed(seed);
+  wallet = new WalletClass(tonweb.provider, {
     publicKey: keyPair.publicKey,
   });
+})();
 
+const getWalletInfo = async () => {
   const address = await wallet.getAddress();
-  const nonBounceableAddress = address.toString({
+  const nonBounceableAddress = Address.parse(
+    address.toString(true, true, true)
+  ).toString({
     bounceable: false,
     testOnly: true,
+    urlSafe: true,
   });
 
   const balance = await tonweb.provider.getBalance(
@@ -59,24 +65,20 @@ const getWalletInfo = async () => {
 
   const jettonBalance = jettonData.balance.toString();
 
+  console.log("My address is " + address.toString());
+  console.log(
+    "My jetton wallet for " +
+      " is " +
+      jettonWalletAddress.toString(true, true, true)
+  );
+  console.log({ jettonBalance });
   return {
     address: nonBounceableAddress,
-    balance: TonWeb.utils.fromNano(balance),
+    balance: Number(TonWeb.utils.fromNano(balance)),
     usdtBalance: jettonBalance / 10 ** 6,
     // history
   };
 };
-
-let wallet = null;
-let keyPair = null;
-(async function initWallet() {
-  const seed = await TonWebMnemonic.mnemonicToSeed(MNEMONIC.split(" "));
-  // const seed = TonWeb.utils.base64ToBytes('YOU_PRIVATE_KEY_IN_BASE64');  // your hot wallet seed, see `common.js`
-  keyPair = TonWeb.utils.keyPairFromSeed(seed);
-  wallet = new WalletClass(tonweb.provider, {
-    publicKey: keyPair.publicKey,
-  });
-})();
 
 const doWithdraw = async (withdrawalRequest) => {
   try {
@@ -207,6 +209,7 @@ const doJettonWithdraw = async (withdrawalRequest) => {
   const balance = await tonweb.provider.getBalance(
     address.toString(true, true, true)
   );
+  console.log("My address is " + address.toString());
   console.log("My balance is " + balance);
 
   if (toncoinAmount.gte(new BN(balance))) {
