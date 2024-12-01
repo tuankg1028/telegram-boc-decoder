@@ -53494,7 +53494,7 @@ var TEST_WALLET = "0QCVZCZQ9qRSksx-OIw8tMywKmU7jl0sOxOBfpYrZRbaKZpz";
 var USDT_MASTER_ADDRESS = IS_MAINNET === "1" ? USDT_MASTER_ADDRESS_MAINNET : USDT_MASTER_ADDRESS_TESTNET,
   TON_API_ENDPOINT = IS_MAINNET === "1" ? "https://toncenter.com/api/v2/jsonRPC" : "https://testnet.toncenter.com/api/v2/jsonRPC";
 var tonConnectUI = new TonConnectUI({
-  manifestUrl: "https://ox-bot.s3.amazonaws.com/tonconnect-manifest.json",
+  manifestUrl: "https://tonbet.me/tonconnect-manifest.json",
   buttonRootId: "ton-connect"
 });
 var tonClient = new TonClient({
@@ -53565,25 +53565,22 @@ function _sendTransaction() {
           return tonConnectUI.sendTransaction(transaction);
         case 6:
           res = _context3.sent;
-          console.log({
-            res: res
-          });
           if (res.boc) {
             $("#boc").val(res.boc);
             document.getElementById("bank-transfer").submit();
             console.log(JSON.stringify(res));
           }
-          _context3.next = 14;
+          _context3.next = 13;
           break;
-        case 11:
-          _context3.prev = 11;
+        case 10:
+          _context3.prev = 10;
           _context3.t0 = _context3["catch"](3);
           console.log(_context3.t0);
-        case 14:
+        case 13:
         case "end":
           return _context3.stop();
       }
-    }, _callee3, null, [[3, 11]]);
+    }, _callee3, null, [[3, 10]]);
   }));
   return _sendTransaction.apply(this, arguments);
 }

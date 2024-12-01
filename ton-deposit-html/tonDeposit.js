@@ -29,7 +29,7 @@ const USDT_MASTER_ADDRESS =
       : "https://testnet.toncenter.com/api/v2/jsonRPC";
 
 const tonConnectUI = new TonConnectUI({
-  manifestUrl: "https://ox-bot.s3.amazonaws.com/tonconnect-manifest.json",
+  manifestUrl: "https://tonbet.me/tonconnect-manifest.json",
   buttonRootId: "ton-connect",
 });
 const tonClient = new TonClient({
