@@ -22,7 +22,7 @@ const BN = TonWeb.utils.BN;
 const tonweb = new TonWeb(
   new TonWeb.HttpProvider(TON_API_ENDPOINT, { apiKey: TON_API_KEY })
 );
-const WalletClass = tonweb.wallet.all.v2R2;
+const WalletClass = tonweb.wallet.all.v4R2;
 
 let wallet = null;
 let keyPair = null;
