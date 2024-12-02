@@ -131,6 +131,13 @@ app.post("/hash", async (req, res) => {
     const cell = Cell.fromBase64(boc);
     const buffer = cell.hash();
     const hashHex = buffer.toString("hex");
+    const explorerUrl = `${TON_EXPLORER_URL}/transaction/${hashHex}`;
+    res.send({
+      notify_url,
+      explorerUrl,
+      status: "success",
+      message: "decode hash success",
+    });
 
     let transaction = null;
     let attempts = 0;
@@ -155,7 +162,6 @@ app.post("/hash", async (req, res) => {
     }
 
     console.log("Transaction:", transaction);
-    const explorerUrl = `${TON_EXPLORER_URL}/transaction/${hashHex}`;
     axios
       .post(notify_url, {
         ...transaction,
@@ -163,16 +169,10 @@ app.post("/hash", async (req, res) => {
         hash: boc,
         explorerUrl,
       })
+      .then(() => console.log("Successfully notified the callback url"))
       .catch((error) => {
         console.log("Failed to notify the callback url", error.message);
       });
-
-    res.send({
-      notify_url,
-      explorerUrl,
-      status: "success",
-      message: "decode hash success",
-    });
   } catch (error) {
     res.status(500).send("Error processing the base64 string");
   }
