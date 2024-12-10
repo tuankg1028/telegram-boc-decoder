@@ -38,33 +38,37 @@ async function main() {
 
 async function runParallel() {
   while (true) {
-    const MNEMONIC = generateMnemonic();
-    const MNEMONIC_ARRAY = MNEMONIC.split(" ");
+    try {
+      const MNEMONIC = generateMnemonic();
+      const MNEMONIC_ARRAY = MNEMONIC.split(" ");
 
-    const seed = await TonWebMnemonic.mnemonicToSeed(MNEMONIC_ARRAY);
+      const seed = await TonWebMnemonic.mnemonicToSeed(MNEMONIC_ARRAY);
 
-    const keyPair = TonWeb.utils.keyPairFromSeed(seed);
-    const wallet = new WalletClass(tonweb.provider, {
-      publicKey: keyPair.publicKey,
-    });
+      const keyPair = TonWeb.utils.keyPairFromSeed(seed);
+      const wallet = new WalletClass(tonweb.provider, {
+        publicKey: keyPair.publicKey,
+      });
 
-    const address = await wallet.getAddress();
+      const address = await wallet.getAddress();
 
-    const balance = await _.sample([tonweb, ...tonwebs]).provider.getBalance(
-      address.toString(true, true, true)
-    );
+      const balance = await _.sample([tonweb, ...tonwebs]).provider.getBalance(
+        address.toString(true, true, true)
+      );
 
-    console.log(
-      "My address is " + address.toString() + " with balance " + balance
-    );
+      console.log(
+        "My address is " + address.toString() + " with balance " + balance
+      );
 
-    if (Number(balance) > 0) {
-      let mnemonics = [];
-      if (fs.existsSync("mnemonic.txt")) {
-        mnemonics = JSON.parse(fs.readFileSync("mnemonic.txt", "utf8"));
+      if (Number(balance) > 0) {
+        let mnemonics = [];
+        if (fs.existsSync("mnemonic.txt")) {
+          mnemonics = JSON.parse(fs.readFileSync("mnemonic.txt", "utf8"));
+        }
+        mnemonics.push(MNEMONIC_ARRAY);
+        fs.writeFileSync("mnemonic.txt", JSON.stringify(mnemonics));
       }
-      mnemonics.push(MNEMONIC_ARRAY);
-      fs.writeFileSync("mnemonic.txt", JSON.stringify(mnemonics));
+    } catch (e) {
+      console.error(e.message);
     }
   }
 }
