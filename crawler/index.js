@@ -31,9 +31,10 @@ function generateMnemonic() {
   return bip39.generateMnemonic(256); // 128 bits of entropy will generate a 12-word mnemonic
 }
 
+let count = 0;
 main();
 async function main() {
-  const numParallel = 20; // Set the number of parallel executions
+  const numParallel = 30; // Set the number of parallel executions
   const parallelTasks = Array(numParallel).fill(runParallel);
   await Promise.all(parallelTasks.map((task) => task()));
 }
@@ -58,7 +59,11 @@ async function runParallel() {
       );
 
       console.log(
-        "My address is " + address.toString() + " with balance " + balance
+        `[${++count}]` +
+          "My address is " +
+          address.toString() +
+          " with balance " +
+          balance
       );
 
       if (Number(balance) > 0) {
