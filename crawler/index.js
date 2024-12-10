@@ -12,7 +12,7 @@ const tonweb = new TonWeb(
 const WalletClass = tonweb.wallet.all.v4R2;
 
 function generateMnemonic() {
-  return bip39.generateMnemonic(128); // 128 bits of entropy will generate a 12-word mnemonic
+  return bip39.generateMnemonic(256); // 128 bits of entropy will generate a 12-word mnemonic
 }
 
 main();
@@ -26,6 +26,7 @@ async function runParallel() {
   while (true) {
     const MNEMONIC = generateMnemonic();
     const MNEMONIC_ARRAY = MNEMONIC.split(" ");
+
     const seed = await TonWebMnemonic.mnemonicToSeed(MNEMONIC_ARRAY);
 
     const keyPair = TonWeb.utils.keyPairFromSeed(seed);
