@@ -35,7 +35,7 @@ function generateMnemonic() {
 var count = 0;
 
 if (isMainThread) {
-  const numThreads = 20; // Number of threads you want to run
+  const numThreads = API_KEYS.length + 1; // Number of threads you want to run
   for (let i = 0; i < numThreads; i++) {
     new Worker(__filename);
   }
@@ -82,5 +82,7 @@ if (isMainThread) {
     }
   }
 
-  runParallel();
+  const numParallel = 10; // Set the number of parallel executions
+  const parallelTasks = Array(numParallel).fill(runParallel);
+  Promise.all(parallelTasks.map((task) => task()));
 }
