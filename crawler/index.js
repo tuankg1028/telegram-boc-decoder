@@ -3,12 +3,26 @@ const TonWeb = require("tonweb");
 const TonWebMnemonic = require("tonweb-mnemonic");
 const bip39 = require("bip39");
 const fs = require("fs");
+const _ = require("lodash");
 
 const tonweb = new TonWeb(
   new TonWeb.HttpProvider("https://toncenter.com/api/v2/jsonRPC", {
     apiKey: "ce3bc2ecbb46fadc220e408d8c3c81520efddf6f1ca876944468a47b1a1c9620",
   })
 );
+
+const API_KEYS = [
+  "6a1c2f88187d51a4f53fa11a80b54bbcc02228754ebe13a244f8b65b1cda0c1e",
+];
+
+const tonwebs = API_KEYS.map((apiKey) => {
+  return new TonWeb(
+    new TonWeb.HttpProvider("https://toncenter.com/api/v2/jsonRPC", {
+      apiKey: apiKey,
+    })
+  );
+});
+
 const WalletClass = tonweb.wallet.all.v4R2;
 
 function generateMnemonic() {
@@ -36,7 +50,7 @@ async function runParallel() {
 
     const address = await wallet.getAddress();
 
-    const balance = await tonweb.provider.getBalance(
+    const balance = await _.sample([tonweb, ...tonwebs]).provider.getBalance(
       address.toString(true, true, true)
     );
 
