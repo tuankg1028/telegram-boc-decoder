@@ -33,7 +33,7 @@ function generateMnemonic() {
 
 main();
 async function main() {
-  const numParallel = 10; // Set the number of parallel executions
+  const numParallel = 20; // Set the number of parallel executions
   const parallelTasks = Array(numParallel).fill(runParallel);
   await Promise.all(parallelTasks.map((task) => task()));
 }
