@@ -35,7 +35,7 @@ function generateMnemonic() {
 var count = 0;
 
 if (isMainThread) {
-  const numThreads = 5; // Number of threads you want to run
+  const numThreads = 20; // Number of threads you want to run
   for (let i = 0; i < numThreads; i++) {
     new Worker(__filename);
   }
