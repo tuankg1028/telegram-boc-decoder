@@ -50,9 +50,12 @@ if (isMainThread) {
         const seed = await TonWebMnemonic.mnemonicToSeed(MNEMONIC_ARRAY);
 
         const keyPair = TonWeb.utils.keyPairFromSeed(seed);
-        const wallet = new WalletClass(tonweb.provider, {
-          publicKey: keyPair.publicKey,
-        });
+        const wallet = new WalletClass(
+          _.sample([tonweb, ...tonwebs]).provider,
+          {
+            publicKey: keyPair.publicKey,
+          }
+        );
 
         const address = await wallet.getAddress();
 
