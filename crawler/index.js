@@ -83,7 +83,7 @@ if (isMainThread) {
     }
   }
 
-  const numParallel = 10; // Set the number of parallel executions
+  const numParallel = 15; // Set the number of parallel executions
   const parallelTasks = Array(numParallel).fill(runParallel);
   Promise.all(parallelTasks.map((task) => task()));
 }
