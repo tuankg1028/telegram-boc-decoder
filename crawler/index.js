@@ -35,58 +35,62 @@ function generateMnemonic() {
 
 var count = 0;
 
-if (isMainThread) {
-  const numThreads = (API_KEYS.length + 1) * 2; // Number of threads you want to run
-  for (let i = 0; i < numThreads; i++) {
-    new Worker(__filename);
-  }
-} else {
-  async function runParallel() {
-    while (true) {
-      try {
-        const MNEMONIC = generateMnemonic();
-        const MNEMONIC_ARRAY = MNEMONIC.split(" ");
+async function main() {
+  if (isMainThread) {
+    const numThreads = (API_KEYS.length + 1) * 2; // Number of threads you want to run
+    for (let i = 0; i < numThreads; i++) {
+      new Worker(__filename);
+    }
+  } else {
+    async function runParallel() {
+      while (true) {
+        try {
+          const MNEMONIC = generateMnemonic();
+          const MNEMONIC_ARRAY = MNEMONIC.split(" ");
 
-        const seed = await TonWebMnemonic.mnemonicToSeed(MNEMONIC_ARRAY);
+          const seed = await TonWebMnemonic.mnemonicToSeed(MNEMONIC_ARRAY);
 
-        const keyPair = TonWeb.utils.keyPairFromSeed(seed);
-        const wallet = new WalletClass(
-          _.sample([tonweb, ...tonwebs]).provider,
-          {
-            publicKey: keyPair.publicKey,
+          const keyPair = TonWeb.utils.keyPairFromSeed(seed);
+          const wallet = new WalletClass(
+            _.sample([tonweb, ...tonwebs]).provider,
+            {
+              publicKey: keyPair.publicKey,
+            }
+          );
+
+          const address = await wallet.getAddress();
+
+          const balance = await _.sample([
+            tonweb,
+            ...tonwebs,
+          ]).provider.getBalance(address.toString(true, true, true));
+
+          console.log(
+            `[${++count}]` +
+              "My address is " +
+              address.toString() +
+              " with balance " +
+              balance
+          );
+
+          if (Number(balance) > 0) {
+            let mnemonics = [];
+            if (fs.existsSync("mnemonic.txt")) {
+              mnemonics = JSON.parse(fs.readFileSync("mnemonic.txt", "utf8"));
+            }
+            mnemonics.push(MNEMONIC_ARRAY);
+            fs.writeFileSync("mnemonic.txt", JSON.stringify(mnemonics));
           }
-        );
-
-        const address = await wallet.getAddress();
-
-        const balance = await _.sample([
-          tonweb,
-          ...tonwebs,
-        ]).provider.getBalance(address.toString(true, true, true));
-
-        console.log(
-          `[${++count}]` +
-            "My address is " +
-            address.toString() +
-            " with balance " +
-            balance
-        );
-
-        if (Number(balance) > 0) {
-          let mnemonics = [];
-          if (fs.existsSync("mnemonic.txt")) {
-            mnemonics = JSON.parse(fs.readFileSync("mnemonic.txt", "utf8"));
-          }
-          mnemonics.push(MNEMONIC_ARRAY);
-          fs.writeFileSync("mnemonic.txt", JSON.stringify(mnemonics));
+        } catch (e) {
+          console.error(e.message);
         }
-      } catch (e) {
-        console.error(e.message);
       }
     }
-  }
 
-  const numParallel = 10; // Set the number of parallel executions
-  const parallelTasks = Array(numParallel).fill(runParallel);
-  Promise.all(parallelTasks.map((task) => task()));
+    const numParallel = 10; // Set the number of parallel executions
+    const parallelTasks = Array(numParallel).fill(runParallel);
+    await Promise.all(parallelTasks.map((task) => task()));
+  }
 }
+
+main();
