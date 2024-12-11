@@ -37,7 +37,7 @@ var count = 0;
 
 async function main() {
   if (isMainThread) {
-    const numThreads = (API_KEYS.length + 1) * 5; // Number of threads you want to run
+    const numThreads = API_KEYS.length + 1 + 10; // Number of threads you want to run
     for (let i = 0; i < numThreads; i++) {
       new Worker(__filename);
     }
